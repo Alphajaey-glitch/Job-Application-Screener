@@ -58,18 +58,25 @@ namespace JobApplicationScreenerAttributeProject
 
         private static void GetHiredApplicants(List<Applicant> applicants)
         {
-            using (StreamWriter sw = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Applicants.txt"), true))
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Applicants.txt");
+            bool fileExists = File.Exists(filePath) && new FileInfo(filePath).Length > 0;
+
+            using (StreamWriter sw = new StreamWriter(filePath, true))
             {
-                sw.WriteLine($"{"Applicants Information",75}");
 
-                sw.WriteLine();
+                if (!fileExists)
+                {
+                    sw.WriteLine($"{"Applicants Information",75}");
 
-                string header = $"{"Full name",-10} {"Email Address",-5} {"Phone Number",25} {"Years of Experience",30} {"Expected salary",30}";
-                sw.WriteLine(header);
-                sw.WriteLine(new string('-', header.Length));
+                    sw.WriteLine();
 
+                    string header = $"{"Full name",-10} {"Email Address",-5} {"Phone Number",25} {"Years of Experience",30} {"Expected salary",30}";
+                    sw.WriteLine(header);
+                    sw.WriteLine(new string('-', header.Length));
 
-                foreach(var applicant in applicants)
+                }
+
+                foreach (var applicant in applicants)
                 {
                     var applicantJson = JsonSerializer.Serialize<Applicant>(applicant);
                     var item = JsonSerializer.Deserialize<Applicant>(applicantJson);
